@@ -192,7 +192,9 @@ Your node will stay "stuck" in the `online` state in the MQTT server.
 
 ## Docker Compose
 
-A [docker-compose.yml](./docker-compose.yml) is available. You can run the following command to launch everything;
+A [docker-compose.yml](./docker-compose.yml) is available.
+This compose includes an MQTT server, and the service will use this one instead ot mqtt.meshtastic.org .
+You can run the following command to launch everything;
 
 ```
 docker compose up
@@ -200,6 +202,7 @@ docker compose up
 
 This will:
 
+- start the mqtt server.
 - Start a MariaDB database server.
 - Run the database migrations.
 - Start the MQTT collector.
@@ -213,6 +216,13 @@ To execute unit tests, run the following;
 ```
 npm run test
 ```
+## Mosquitto user management
+
+The user database is located in mosquitto/passwd file.
+They need to be added one per line in plane text as "user:password" strings.
+Once you've added a new user, you need to encrypt the password by running `docker exec mosquitto mosquitto_passwd -U /etc/mosquitto/passwd` command.
+After this, you need to reload the mosquitto configuration using `docker kill --signal=HUP mosquitto`.
+Important to note is that every time you run the mosquitto_passwd command, it will encript all passwords, so you will have to keep a plaintext version of the file, then copy it to the passwd file and encript it each time.
 
 ## Contributing
 
